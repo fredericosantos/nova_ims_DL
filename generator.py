@@ -57,7 +57,7 @@ def createStack(block_type: "conv/deconv", input_shape: int, input_filters: int,
     # Conv Example
     # tensor shape: 1 > 2 > 4 > 8 > 16 > 32 > 64 > 128 > 256
     # filters shape: 768 > 384 > 192 > 96 > 48 > 3
-    shape_list = [input_shape]
+    shape_list = []
     if block_type == "conv":
         while input_shape > output_shape:
             input_shape //= 2
@@ -89,19 +89,19 @@ def createStack(block_type: "conv/deconv", input_shape: int, input_filters: int,
 
     stack = [addBlock(block_type, filters=f, kernel_size=kernel_size)
              for f in filters_list]
-    print(f"{filters_list = }")
-    print(f"{shape_list = }")
+    print(f"{len(filters_list)} {filters_list = }")
+    print(f"{len(shape_list)} {shape_list = }")
+    
     return stack
 
 
 print("conv:")
-createStack("conv", 256, 3, 1, 384)
+createStack("conv", (input_shape := 256), (input_filters := 3), (output_shape := 1), (output_filters := 384))
 print("deconv:")
-createStack("deconv", 2, 384*2, 128, 3*2**4)
+createStack("deconv", output_shape, output_filters*2, input_shape//2 , input_filters*2**4)
+print()
 
 # %%
-
-
 def Generator(input_shape, input_filters, conv_out_shape, conv_out_filters, kernel_size=4):
     inputs = tf.keras.layers.Input(
         shape=[input_shape, input_shape, input_filters])
@@ -109,6 +109,7 @@ def Generator(input_shape, input_filters, conv_out_shape, conv_out_filters, kern
         "conv", input_shape=input_shape, input_filters=input_filters, output_shape=conv_out_shape, output_filters=conv_out_filters, kernel_size=kernel_size)
     deconv_stack = createStack(
         "deconv", input_shape=conv_out_shape*2, input_filters=conv_out_filters*2, output_shape=input_shape//2, output_filters=input_filters * 2**4, kernel_size=kernel_size)
+    
     last_layer = tf.keras.layers.Conv2DTranspose(
         input_filters, 4, strides=2, padding="same", kernel_initializer=initializer(), activation="tanh"
     )
@@ -116,19 +117,29 @@ def Generator(input_shape, input_filters, conv_out_shape, conv_out_filters, kern
     # Create skip links while downsampling
     skips = []
     x = inputs
-    for conv in deconv_stack:
+    print("conv")
+    print(x.shape)
+    for conv in conv_stack:
         x = conv(x)
-        skips.insert(0, x)
+        skips.append(x)
+        print(x.shape)
+        
     # remove the last layer from the skip links
-    skips = skips[1:]
-
+    print(skips)
+    skips = reversed(skips[:-1])
+    print("deconv")
     # deconvolution and establish the skip connections shown in paper
+    i = 0
     for deconv, skip in zip(deconv_stack, skips):
+        i += 1
         x = deconv(x)
         x = tf.keras.layers.Concatenate()([x, skip])
+        print(i, x.shape)
 
     x = last_layer(x)
-
+    print("last layer:", x.shape)
     return tf.keras.Model(inputs=inputs, outputs=x)
 
-    generator = Generator(256, 3, 384)
+generator = Generator(input_shape=256, input_filters=3, conv_out_shape=1, conv_out_filters=384)
+tf.keras.utils.plot_model(generator, show_shapes=True, dpi=200)
+# %%
