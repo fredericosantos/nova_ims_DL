@@ -58,3 +58,6 @@ class ReflectionPadding2D(tf.keras.layers.Layer):
             [0,0],
         ]
         return tf.pad(input_tensor, padding_tensor, mode="REFLECT")
+
+def initializer(mean=0.0, stddev=0.02, seed=None):
+    return tf.keras.initializers.RandomNormal(mean=0.0, stddev=0.02)
