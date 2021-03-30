@@ -33,3 +33,28 @@ def preprocess_image(image, label, phase: "train/test"):
         image = random_jitter(image)
     return normalize(image)
 
+class ReflectionPadding2D(tf.keras.layers.Layer):
+    """Reflective padding used in the paper.
+    https://arxiv.org/pdf/1703.10593.pdf ==> 7.2 Network architectures. 
+    'Reflection padding was used to reduce artifacts.'
+
+    Code adapted from tensorflow tutorials.
+    Args:
+        padding(tuple): padding for spatial dimensions
+    Returns:
+        Padded Tensor.
+    """
+
+    def __init__(self, padding=(1,1),  **kwargs):
+        self.padding = tuple(padding)
+        super(ReflectionPadding2D, self).__init__(**kwargs)
+
+    def call(self, input_tensor, mask=None):
+        padding_width, padding_height = self.padding
+        padding_tensor = [
+            [0, 0],
+            [padding_height, padding_height],
+            [padding_width, padding_width],
+            [0,0],
+        ]
+        return tf.pad(input_tensor, padding_tensor, mode="REFLECT")
