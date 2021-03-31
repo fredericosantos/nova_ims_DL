@@ -55,7 +55,7 @@ def Discriminator(
     x = GlobalAveragePooling2D()(x)
 
     # Output 
-    x = Dense(1, activation="sigmoid")
+    x = Dense(1, activation="sigmoid")(x)
 
     model = keras.models.Model(img_input, x, name=name)
     return model
