@@ -44,12 +44,13 @@ def convBlock(
             block.add(InstanceNormalization())
     if dropout > 0:
         block.add(keras.layers.Dropout(dropout))
-    if activation.lower() == "relu":
-        block.add(keras.layers.ReLU())
-    elif activation.lower() == "leakyrelu":
-        block.add(keras.layers.LeakyReLU(0.2))
-    elif activation.lower() == "tanh":
-        block.add(keras.layers.Activation("tanh"))
+    if activation:
+        if activation.lower() == "relu":
+            block.add(keras.layers.ReLU())
+        elif activation.lower() == "leakyrelu":
+            block.add(keras.layers.LeakyReLU(0.2))
+        elif activation.lower() == "tanh":
+            block.add(keras.layers.Activation("tanh"))
     return block
 
 
@@ -90,10 +91,13 @@ def deconvBlock(
             block.add(InstanceNormalization())
     if dropout > 0:
         block.add(keras.layers.Dropout)
-    if activation.lower() == "relu":
-        block.add(keras.layers.ReLU())
-    elif activation.lower() == "leakyrelu":
-        block.add(keras.layers.LeakyReLU(0.2))
+    if activation:
+        if activation.lower() == "relu":
+            block.add(keras.layers.ReLU())
+        elif activation.lower() == "leakyrelu":
+            block.add(keras.layers.LeakyReLU(0.2))
+        elif activation.lower() == "tanh":
+            block.add(keras.layers.Activation("tanh"))
     return block
 
 # Residual Network Block
@@ -127,7 +131,7 @@ def resBlock(
         if dropout > 0:
             f.add(keras.layers.Dropout)
         
-        # According to the paper, 
+        # According to the paper, do not apply ReLU after 2nd layer 
         if i == 0:   
             if activation.lower() == "relu":
                 f.add(keras.layers.ReLU())
