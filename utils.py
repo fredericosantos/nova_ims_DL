@@ -1,35 +1,36 @@
 import tensorflow as tf
 from tensorflow import keras
+import os
 
 IMG_HEIGHT = 128
 IMG_WIDTH = 128
 N_CHANNELS = 3
 
 # generates a keras.dataset object for train or val.
-def train_ds_gen(directory,val_split=0.2,val=False):
+def train_ds_gen(dir_name,val_split=0.2,val=False):
     """ Generates a dataset. 
     Returns a tf.data.Dataset object.
     Parameters: directory: the folder where the images are.
     val_split = number to feed to keras.preprocess.image from directory. Default is 0.2.
     val = whether the func generates a training or val dataset. Default generates train.
     """
+    directory = os.path.join(os.getcwd(),"datasets",dir_name)
     if val:
         subset="validation"
     else:
         subset="training"
         
     train_ds = tf.keras.preprocessing.image_dataset_from_directory(
-        directory,
+        directory=directory,
         validation_split=val_split,
         subset=subset,
         seed=42,
-        image_size=(128,128),
-        batch_size=1
+        image_size=(128,128)
         )
     
     return train_ds
 
-temp_ds = train_ds_gen("datasets/rusty car")
+temp_ds = train_ds_gen("datasets/rusty_car")
 
 # randomly crop the image
 def random_crop(image):
