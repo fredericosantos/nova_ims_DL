@@ -64,12 +64,16 @@ class CycleGAN(keras.Model):
 
         # Record passes for gradient calculation
         with tf.GradientTape(persistent=True) as tape:
+            # D_X(x) -> x_D
+            x_D = self.D_X(x, training=True)
+            # D_Y(y) -> y_D
+            y_D = self.D_Y(y, training=True)
         
             # G(x) -> Y_hat
             Y_hat = self.G(x, training=True)
-            
+
             # D_Y(Y_hat) -> Y_hat_D
-            Y_hat_D = self.D_Y(Y_hat)
+            Y_hat_D = self.D_Y(Y_hat, training=True)
             
             # F(Y_hat) -> x_hat
             x_hat = self.F(Y_hat, training=True)
@@ -77,9 +81,23 @@ class CycleGAN(keras.Model):
             # F(y) -> X_hat
             X_hat = self.F(y, training=True)
             
+            # D_X(X_hat) -> X_hat_D
+            X_hat_D = self.D_X(X_hat, training=True)
+
             # G(X_hat) -> y_hat
             y_hat = self.G(X_hat, training=True)
 
             # Identity mapping where F(x) -> x_i and G(y) -> y_i
             x_i = self.F(x, training=True)
             y_i = self.G(y, training=True)
+            
+            # Generators' adversarial loss
+            G_loss = self.generator_loss_fn(Y_hat_D)
+            F_loss = self.generator_loss_fn(X_hat_D)
+
+            # Generators' cycle consistency loss
+            forward_cycle_loss = self.cycle_consistency_loss_fn(x, x_hat) * self.lambda_cycle
+            backward_cycle_loss = self.cycle_consistency_loss_fn(y, y_hat) * self.lambda_cycle
+
+            # Generator Identity Loss
+            G_identity_loss = self.identity_loss_fn()
