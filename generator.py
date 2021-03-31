@@ -71,10 +71,10 @@ def Generator(
     model = keras.models.Model(img_input, x, name=name)
     return model
 
-
-# generator = Generator()
-# tf.keras.utils.plot_model(
-#     generator, to_file="generator.png", show_shapes=True, dpi=128, expand_nested=True
-# )
+if __name__ == '__main__':
+    generator = Generator()
+    tf.keras.utils.plot_model(
+        generator, to_file="generator.png", show_shapes=True, dpi=128, expand_nested=True
+    )
 
 # %%
