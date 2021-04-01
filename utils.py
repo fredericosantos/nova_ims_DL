@@ -8,7 +8,7 @@ N_CHANNELS = 3
 BATCH_SIZE = 1
 
 # generates a keras.dataset object for train or val.
-def train_ds_gen(dir_name, val_split=0.2, val=False, batch_size=1):
+def train_ds_gen(dir_name, val_split=0.2, val=False, BATCH_SIZE=1):
     """ Generates a dataset. 
     Returns a tf.data.Dataset object.
     Parameters: directory: the folder where the images are.
@@ -27,7 +27,7 @@ def train_ds_gen(dir_name, val_split=0.2, val=False, batch_size=1):
         validation_split=val_split,
         subset=subset,
         seed=42,
-        batch_size=BATCH_SIZE,
+        BATCH_SIZE=BATCH_SIZE,
     )
 
     return train_ds
@@ -43,7 +43,7 @@ def normalize_img(img):
 
 def preprocess_train_img(tensor_img, tensor_label):
     tensor_img = tf.image.resize(tensor_img, [150, 150])
-    tensor_img = tf.image.random_crop(tensor_img, [batch_size, 128, 128, 3])
+    tensor_img = tf.image.random_crop(tensor_img, [BATCH_SIZE, 128, 128, 3])
     tensor_img = tf.image.random_flip_left_right(tensor_img)
     # tensor_img = normalize_img(img)
     return tensor_img, tensor_label
