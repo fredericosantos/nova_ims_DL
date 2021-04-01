@@ -2,8 +2,8 @@ import tensorflow as tf
 from tensorflow import keras
 import os
 
-IMG_HEIGHT = 128
-IMG_WIDTH = 128
+IMG_HEIGHT = 64
+IMG_WIDTH = IMG_HEIGHT
 N_CHANNELS = 3
 batch_size = 1
 
@@ -18,10 +18,10 @@ def train_ds_gen(dir_name,val_split=0.2,val=False,batch_size=1):
     directory = os.path.join(os.getcwd(),"datasets",dir_name)
     
     if val:
-        subset="validation"
+        subset = "validation"
     else:
-        subset="training"
-        
+        subset = "training"
+
     train_ds = tf.keras.preprocessing.image_dataset_from_directory(
         directory=directory,
         validation_split=val_split,
@@ -62,7 +62,7 @@ class ReflectionPadding2D(tf.keras.layers.Layer):
         Padded Tensor.
     """
 
-    def __init__(self, padding=(1,1),  **kwargs):
+    def __init__(self, padding=(1, 1), **kwargs):
         self.padding = tuple(padding)
         super(ReflectionPadding2D, self).__init__(**kwargs)
 
@@ -72,9 +72,10 @@ class ReflectionPadding2D(tf.keras.layers.Layer):
             [0, 0],
             [padding_height, padding_height],
             [padding_width, padding_width],
-            [0,0],
+            [0, 0],
         ]
         return tf.pad(input_tensor, padding_tensor, mode="REFLECT")
+
 
 def initializer(mean=0.0, stddev=0.02, seed=None):
     return tf.keras.initializers.RandomNormal(mean=0.0, stddev=0.02)

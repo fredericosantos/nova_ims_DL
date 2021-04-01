@@ -24,6 +24,7 @@ def Generator(
     img_input = tf.keras.layers.Input(
         shape=[input_shape, input_shape, input_filters], name="Input"
     )
+    # x = keras.layers.experimental.preprocessing.Rescaling(scale=1.0 / 127.5, offset=-1)
 
     # Because the kernel size is 7x7 on the first convolution, we add reflective padding 3x3
     x = ReflectionPadding2D(padding=(3, 3), name="REF_0")(img_input)
