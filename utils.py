@@ -8,7 +8,7 @@ N_CHANNELS = 3
 BATCH_SIZE = 1
 
 # generates a keras.dataset object for train or val.
-def train_ds_gen(dir_name, val_split=0.2, val=False, BATCH_SIZE=1):
+def train_ds_gen(dir_name, val_split=0.2, val=False, batch_size=1):
     """ Generates a dataset. 
     Returns a tf.data.Dataset object.
     Parameters: directory: the folder where the images are.
@@ -27,7 +27,7 @@ def train_ds_gen(dir_name, val_split=0.2, val=False, BATCH_SIZE=1):
         validation_split=val_split,
         subset=subset,
         seed=42,
-        BATCH_SIZE=BATCH_SIZE,
+        batch_size=BATCH_SIZE,
     )
 
     return train_ds
