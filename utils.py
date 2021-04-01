@@ -24,13 +24,10 @@ def train_ds_gen(dir_name,val_split=0.2,val=False):
         directory=directory,
         validation_split=val_split,
         subset=subset,
-        seed=42,
-        image_size=(128,128)
+        seed=42
         )
     
     return train_ds
-
-temp_ds = train_ds_gen("datasets/rusty_car")
 
 # randomly crop the image
 def random_crop(image):
@@ -59,6 +56,8 @@ def random_jitter(image, resize_zoom: float = 1.1):
 def preprocess_image(image, label, phase: "train/test"):
     if phase == "train":
         image = random_jitter(image)
+    if phase == "test":
+        image = tf.image.resize(image,[IMG_HEIGHT,IMG_WIDTH],method=tf.imageResizeMethod.NEAREST_NEIGHBOR)
     return normalize(image)
 
 class ReflectionPadding2D(tf.keras.layers.Layer):
