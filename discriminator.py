@@ -56,9 +56,10 @@ def Discriminator(
     model = keras.models.Model(img_input, x, name=name)
     return model
 
-discriminator = Discriminator()
+if __name__ == "__main__":
+    discriminator = Discriminator()
 
-tf.keras.utils.plot_model(discriminator, to_file="discriminator.png", show_shapes=True, dpi=128)
-with open('discriminator.txt', 'w') as f:
-    discriminator.summary(print_fn=lambda x: f.write(x + '\n'))
+    tf.keras.utils.plot_model(discriminator, to_file="discriminator.png", show_shapes=True, dpi=128)
+    with open('discriminator.txt', 'w') as f:
+        discriminator.summary(print_fn=lambda x: f.write(x + '\n'))
 # %%
