@@ -8,14 +8,14 @@ from utils import ReflectionPadding2D, initializer
 from blocks import convBlock
 
 
-def Discriminator(
+def PatchGAN(
     filters: int = 64,
     input_shape: int = 256,
     input_filters: int = 3,
     n_convBlocks: int = 3,
     name=None,
 ):
-    """Discriminator for CycleGAN
+    """PatchGAN Discriminator for CycleGAN
     Args:
         filters: number of filters to use on the first convolution"""
 
@@ -64,10 +64,10 @@ def Discriminator(
 
 
 if __name__ == "__main__":
-    discriminator = Discriminator()
+    discriminator = PatchGAN()
     tf.keras.utils.plot_model(
         discriminator,
-        to_file="discriminator.png",
+        to_file="architecture_PatchGAN.png",
         show_shapes=True,
         dpi=128,
         expand_nested=True,
