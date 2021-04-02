@@ -3,7 +3,7 @@
 downloads/
 logs/
 .vscode/
-
+datasets/normal2rusty/
 __pycache__/
 
 cesah.cesah/
