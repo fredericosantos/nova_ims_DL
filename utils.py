@@ -2,10 +2,13 @@ import tensorflow as tf
 from tensorflow import keras
 import os
 
-IMG_HEIGHT = 64
+IMG_HEIGHT = 128
 IMG_WIDTH = IMG_HEIGHT
 N_CHANNELS = 3
 BATCH_SIZE = 1
+
+def getImageSize():
+    return IMG_HEIGHT
 
 # generates a keras.dataset object for train or val.
 def train_ds_gen(dir_name, val_split=0.2, val=False, batch_size=1):
