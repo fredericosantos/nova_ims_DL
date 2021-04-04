@@ -1,0 +1,2 @@
+Dataset along with checkpoint (100MB) for reproducing results can be found below
+https://drive.google.com/file/d/1VPOnIPUqClG8VMQUkGpi4kDiNR-shaGO

@@ -91,7 +91,7 @@ if __name__ == "__main__":
         to_file="generator.png",
         show_shapes=True,
         dpi=128,
-        expand_nested=False,
+        expand_nested=True,
     )
 
 # %%

@@ -12,3 +12,7 @@ cesah.cesah/
 pictures.7z
 
 checkpoints/train/
+
+*.zip
+
+image_results/
