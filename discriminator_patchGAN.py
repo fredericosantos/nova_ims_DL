@@ -17,12 +17,17 @@ def PatchGAN(
 ):
     """PatchGAN Discriminator for CycleGAN
     Args:
-        filters: number of filters to use on the first convolution"""
+        filters: number of filters to use on the first convolution
+        input_shape: image must be a square with input_shape x input_shape dimensions
+        input_filters: number of channels the image has, RGB has 3 input_filters
+        n_convBlocks: number of convolutional layers to go through before going through the residual block layers
+        name: name of the Generator to be fed into keras
+        """
 
+    # Input layer
     img_input = tf.keras.layers.Input(
         shape=[input_shape, input_shape, input_filters], name="Input"
     )
-    # x = keras.layers.experimental.preprocessing.Rescaling(scale=1.0 / 127.5, offset=-1)
     # According to CycleGAN paper architecture, do not apply InstanceNormalization to first layer C64
     x = convBlock(
         filters=filters,
@@ -34,7 +39,7 @@ def PatchGAN(
         name=f"C{filters}",
     )(img_input)
 
-    # Convolution / Encoder
+    # Convolutional layers
     for n in range(n_convBlocks):
         filters *= 2
         if n < 2:
@@ -50,6 +55,8 @@ def PatchGAN(
             norm_type="instance",
             name=f"d{filters}",
         )(x)
+
+    # Final Convolutional Layer that transforms the image into a  X by X with 1 feature map
     x = convBlock(
         filters=1,
         activation=None,

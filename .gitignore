@@ -5,6 +5,7 @@ logs/
 .vscode/
 datasets/normal2rusty/
 __pycache__/
+images/
 
 cesah.cesah/
 

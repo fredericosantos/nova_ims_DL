@@ -19,12 +19,19 @@ def Generator(
 ):
     """Generator for CycleGAN
     Args:
-        filters: number of filters to use on the first convolution"""
+        filters: number of filters/features to use on the first convolution
+        input_shape: image must be a square with input_shape x input_shape dimensions
+        input_filters: number of channels the image has, RGB has 3 input_filters
+        n_convBlocks: number of convolutional layers to go through before going through the residual block layers
+        n_resBlocks: number of residual block layers to add
+        n_deconvBlocks: number of deconvolutional layers to go through after going through the residual block layers
+        name: name of the Generator to be fed into keras
+        """
 
+    # Initial input layer
     img_input = tf.keras.layers.Input(
         shape=[input_shape, input_shape, input_filters], name="Input"
     )
-    # x = keras.layers.experimental.preprocessing.Rescaling(scale=1.0 / 127.5, offset=-1)
 
     # Because the kernel size is 7x7 on the first convolution, we add reflective padding 3x3
     x = ReflectionPadding2D(padding=(3, 3), name="REF_0")(img_input)
@@ -40,26 +47,30 @@ def Generator(
         name=f"c7s1-{filters}",
     )(x)
 
-    # Convolution / Encoder
+    # Convolution / Encoder layers
     for _ in range(n_convBlocks):
         filters *= 2
         x = convBlock(
             filters=filters, activation="relu", norm_type="instance", name=f"d{filters}"
         )(x)
 
-    # Residual Blocks
+    # Residual Blocks (the backbone of resnet!)
     for _ in range(n_resBlocks):
         x = resBlock(
             x, activation="relu", norm_type="instance", name=f"R{x.shape[-1]}_block{_}"
         )
 
+    # Deconvolution / Encoder layers
     for _ in range(n_deconvBlocks):
         filters //= 2
         x = deconvBlock(
             filters=filters, activation="relu", norm_type="instance", name=f"u{filters}"
         )(x)
 
+    # Apply reflective padding before reconstructing the image
     x = ReflectionPadding2D((3, 3), name="REF_last")(x)
+
+    # Reconstruct the image ~ tanh changes range of features to [0, 1]
     x = convBlock(
         filters=input_filters,
         activation="tanh",
@@ -72,10 +83,15 @@ def Generator(
     model = keras.models.Model(img_input, x, name=name)
     return model
 
-if __name__ == '__main__':
+# if generator.py is ran, print the default architecture
+if __name__ == "__main__":
     generator = Generator()
     tf.keras.utils.plot_model(
-        generator, to_file="generator.png", show_shapes=True, dpi=128, expand_nested=True
+        generator,
+        to_file="generator.png",
+        show_shapes=True,
+        dpi=128,
+        expand_nested=False,
     )
 
 # %%
